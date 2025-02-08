@@ -1,0 +1,29 @@
+# Python
+*.pyc
+**pycache**/
+*.py[cod]
+*$py.class
+
+# Entorno virtual
+venv/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Variables de entorno
+.env
+.env.local
+
+# IDEs y editores
+.vscode/
+.idea/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
