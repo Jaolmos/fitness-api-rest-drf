@@ -20,7 +20,8 @@ class OpenAIService:
         self.temperature = 0.7
 
     def _create_prompt(self, experience_level: str, fitness_goal: str,
-                       available_days: int, health_conditions: str = None) -> str:
+                       available_days: int, gender: str = 'M',
+                       health_conditions: str = None) -> str:
         """Crea el prompt para OpenAI"""
 
         # Configuraciones según el objetivo
@@ -93,12 +94,14 @@ class OpenAIService:
         - Usar estos días exactamente: {days_string}
         - Objetivo: {config['description']}
         - Nivel: {experience_level}
+        - Género: {'Masculino' if gender == 'M' else 'Femenino'}
         - Mínimo 4 ejercicios por día
         - Series: 3-5 (número entero)
         - Repeticiones: {config['reps']}
         - Descansos: {config['rest']}
         - Ejercicios compuestos: descansos más largos
         - Ejercicios aislados: descansos más cortos
+        - Adaptar ejercicios y cargas según el género
         {f'- Considerar: {health_conditions}' if health_conditions else ''}
 
         RECUERDA: DEVOLVER SOLO EL JSON, SIN NINGÚN TEXTO ADICIONAL"""
@@ -141,6 +144,7 @@ class OpenAIService:
         experience_level: str,
         fitness_goal: str,
         available_days: int,
+        gender: str = 'M',
         health_conditions: str = None
     ) -> Dict[str, Any]:
         print("DEBUG: Intentando conexión con OpenAI")
@@ -153,6 +157,7 @@ class OpenAIService:
             experience_level: Nivel de experiencia (BEG, INT, ADV)
             fitness_goal: Objetivo del entrenamiento
             available_days: Días disponibles para entrenar
+            gender: Género del individuo
             health_conditions: Condiciones de salud a considerar
 
         Returns:
@@ -165,6 +170,7 @@ class OpenAIService:
             experience_level,
             fitness_goal,
             available_days,
+            gender,
             health_conditions
         )
 

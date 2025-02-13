@@ -17,10 +17,21 @@ class UserProfile(models.Model):
         ('MAINTENANCE', 'Mantenimiento'),
     ]
 
+    GENDER_CHOICES = [
+        ('M', 'Masculino'),
+        ('F', 'Femenino'),
+    ]
+
     user = models.OneToOneField(
         User, 
         on_delete=models.CASCADE,
         related_name='profile'
+    )
+    gender = models.CharField(
+        max_length=1, 
+        choices=GENDER_CHOICES, 
+        default='M',
+        verbose_name='Género'
     )
     weight = models.FloatField()
     height = models.FloatField()
