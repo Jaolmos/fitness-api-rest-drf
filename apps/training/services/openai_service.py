@@ -23,15 +23,50 @@ class OpenAIService:
                        available_days: int, health_conditions: str = None) -> str:
         """Crea el prompt para OpenAI"""
 
-        base_prompt = f"""Actúa como un entrenador personal profesional experto en crear planes de entrenamiento.
-        
-        Necesito un plan de entrenamiento con estas características:
-        - Nivel de experiencia: {experience_level}
-        - Objetivo: {fitness_goal}
-        - Días disponibles: {available_days}
-        {f'- Condiciones de salud a considerar: {health_conditions}' if health_conditions else ''}
+        # Configuraciones según el objetivo
+        training_configs = {
+            "STRENGTH": {
+                "reps": "4-8 repeticiones",
+                "rest": "120-180 segundos",
+                "description": "Enfoque en fuerza máxima"
+            },
+            "HYPERTROPHY": {
+                "reps": "8-12 repeticiones",
+                "rest": "60-90 segundos",
+                "description": "Enfoque en crecimiento muscular"
+            },
+            "ENDURANCE": {
+                "reps": "12-20 repeticiones",
+                "rest": "30-45 segundos",
+                "description": "Enfoque en resistencia muscular"
+            },
+            "WEIGHT_LOSS": {
+                "reps": "12-15 repeticiones",
+                "rest": "45-60 segundos",
+                "description": "Enfoque en pérdida de grasa"
+            }
+        }
 
-        Devuelve SOLO un JSON con esta estructura exacta, sin ningún texto adicional:
+        config = training_configs.get(fitness_goal, training_configs["STRENGTH"])
+        
+        # Distribuciones óptimas de días
+        day_distributions = {
+            2: ["Lunes", "Jueves"],
+            3: ["Lunes", "Miércoles", "Viernes"],
+            4: ["Lunes", "Martes", "Jueves", "Viernes"],
+            5: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"],
+            6: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+            7: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+        }
+
+        suggested_days = day_distributions.get(available_days, [f"Día {i+1}" for i in range(available_days)])
+        days_string = ", ".join(suggested_days)
+
+        base_prompt = f"""Actúa como un entrenador personal profesional experto en crear planes de entrenamiento.
+
+        IMPORTANTE: DEBES DEVOLVER SOLO UN JSON VÁLIDO CON LA SIGUIENTE ESTRUCTURA.
+        NO INCLUYAS NINGÚN TEXTO ADICIONAL, SOLO EL JSON.
+
         {{
             "dias": [
                 {{
@@ -39,20 +74,34 @@ class OpenAIService:
                     "ejercicios": [
                         {{
                             "nombre": "Press de banca",
-                            "series": 3,
-                            "repeticiones": "8-12",
-                            "descanso": "90"
+                            "series": 4,
+                            "repeticiones": "6-8",
+                            "descanso": "120"
+                        }},
+                        {{
+                            "nombre": "Sentadillas",
+                            "series": 4,
+                            "repeticiones": "6-8",
+                            "descanso": "120"
                         }}
                     ]
                 }}
             ]
         }}
 
-        IMPORTANTE: 
-        - Los valores de series deben ser números enteros
-        - Los valores de repeticiones y descanso deben ser strings
-        - No incluyas comentarios ni texto adicional
-        - Solo devuelve el JSON"""
+        INSTRUCCIONES:
+        - Usar estos días exactamente: {days_string}
+        - Objetivo: {config['description']}
+        - Nivel: {experience_level}
+        - Mínimo 4 ejercicios por día
+        - Series: 3-5 (número entero)
+        - Repeticiones: {config['reps']}
+        - Descansos: {config['rest']}
+        - Ejercicios compuestos: descansos más largos
+        - Ejercicios aislados: descansos más cortos
+        {f'- Considerar: {health_conditions}' if health_conditions else ''}
+
+        RECUERDA: DEVOLVER SOLO EL JSON, SIN NINGÚN TEXTO ADICIONAL"""
 
         return base_prompt
 
