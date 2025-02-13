@@ -14,7 +14,7 @@ class OpenAIService:
     def _create_prompt(self, experience_level: str, fitness_goal: str,
                        available_days: int, health_conditions: str = None) -> str:
         """Crea el prompt para OpenAI"""
-
+        
         base_prompt = f"""Actúa como un entrenador personal profesional experto en crear planes de entrenamiento.
         
         Necesito un plan de entrenamiento con estas características:
@@ -23,30 +23,28 @@ class OpenAIService:
         - Días disponibles: {available_days}
         {f'- Condiciones de salud a considerar: {health_conditions}' if health_conditions else ''}
 
-        El plan debe seguir estas pautas:
-        1. Estructura óptima según el nivel y objetivo
-        2. Ejercicios específicos con series, repeticiones y descanso
-        3. Progresión adecuada
-        4. Consideraciones de seguridad
-        
-        Devuelve SOLO un JSON con esta estructura exacta:
-        {
+        Devuelve SOLO un JSON con esta estructura exacta, sin ningún texto adicional:
+        {{
             "dias": [
-                {
-                "dia": "nombre del día",
+                {{
+                    "dia": "Lunes",
                     "ejercicios": [
-                        {
-                    "nombre": "nombre del ejercicio",
-                            "series": "número de series",
-                            "repeticiones": "rango de repeticiones",
-                            "descanso": "tiempo en segundos"
-                        }
+                        {{
+                            "nombre": "Press de banca",
+                            "series": 3,
+                            "repeticiones": "8-12",
+                            "descanso": "90"
+                        }}
                     ]
-                }
+                }}
             ]
-        }
-        
-        NO incluyas ningún texto adicional, SOLO el JSON."""
+        }}
+
+        IMPORTANTE: 
+        - Los valores de series deben ser números enteros
+        - Los valores de repeticiones y descanso deben ser strings
+        - No incluyas comentarios ni texto adicional
+        - Solo devuelve el JSON"""
 
         return base_prompt
 
@@ -67,9 +65,13 @@ class OpenAIService:
                     return False
 
                 for ejercicio in dia['ejercicios']:
-                    required_keys = ['nombre', 'series',
-                                     'repeticiones', 'descanso']
+                    required_keys = ['nombre', 'series', 'repeticiones', 'descanso']
                     if not all(key in ejercicio for key in required_keys):
+                        return False
+                    # Validar tipos de datos
+                    if not isinstance(ejercicio['series'], int):
+                        return False
+                    if not all(isinstance(ejercicio[key], str) for key in ['nombre', 'repeticiones', 'descanso']):
                         return False
 
             return True

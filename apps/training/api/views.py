@@ -1,9 +1,13 @@
+from django.conf import settings
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from apps.training.services.openai_service import OpenAIService
 from apps.training.models import TrainingPlan
 from apps.training.api.serializers import TrainingPlanSerializer
+import logging
+
+
 
 class TrainingPlanListCreateView(generics.ListCreateAPIView):
     """Vista para listar y crear planes de entrenamiento"""
@@ -33,6 +37,8 @@ class GenerateTrainingPlanView(generics.CreateAPIView):
     serializer_class = TrainingPlanSerializer
 
     def create(self, request, *args, **kwargs):
+        
+        logging.warning(f"API Key starts with: {settings.OPENAI_API_KEY[:10]}...")
         # Obtener los datos del perfil del usuario
         profile = request.user.profile
         
