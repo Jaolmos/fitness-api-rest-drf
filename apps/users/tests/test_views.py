@@ -57,9 +57,14 @@ class TestUserViews:
 
     def test_get_profile(self):
         """Test que usuario autenticado puede ver su perfil"""
-        # Crear usuario y perfil
+        # Crear usuario (el signal crea automáticamente el UserProfile)
         user = User.objects.create_user(**self.user_data)
-        profile = UserProfile.objects.create(user=user, **self.profile_data)
+        
+        # Actualizar el perfil existente con los datos de prueba
+        profile = user.profile
+        for key, value in self.profile_data.items():
+            setattr(profile, key, value)
+        profile.save()
         
         # Obtener token
         response = self.client.post(self.token_url, {
@@ -73,7 +78,8 @@ class TestUserViews:
         response = self.client.get(self.profile_url)
         
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['weight'] == self.profile_data['weight']
-        
-        
+        # Verificamos que cada campo del perfil coincida con los datos de prueba
+        for key, value in self.profile_data.items():
+            assert response.data[key] == value
+
         # pytest apps/users/tests/test_views.py -v
