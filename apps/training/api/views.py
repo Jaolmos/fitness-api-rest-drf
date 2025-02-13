@@ -37,27 +37,37 @@ class GenerateTrainingPlanView(generics.CreateAPIView):
     serializer_class = TrainingPlanSerializer
 
     def create(self, request, *args, **kwargs):
-        
-        logging.warning(f"API Key starts with: {settings.OPENAI_API_KEY[:10]}...")
-        # Obtener los datos del perfil del usuario
-        profile = request.user.profile
-        
-        # Inicializar el servicio de OpenAI
-        openai_service = OpenAIService()
-        
         try:
-            # Generar el plan
-            plan_data = openai_service.generate_training_plan(
-                experience_level=profile.experience_level,
-                fitness_goal=profile.fitness_goal,
-                available_days=profile.available_days,
-                health_conditions=profile.health_conditions
-            )
+            print("DEBUG: Iniciando generación de plan de entrenamiento")
             
+            # Obtener los datos del perfil del usuario
+            profile = request.user.profile
+            print(f"DEBUG: Perfil encontrado - Usuario: {request.user.username}")
+            print(f"DEBUG: Datos del perfil - Nivel: {profile.experience_level}, "
+                  f"Objetivo: {profile.fitness_goal}, "
+                  f"Días disponibles: {profile.available_days}")
+            
+            # Inicializar el servicio de OpenAI
+            openai_service = OpenAIService()
+            
+            try:
+                # Generar el plan
+                plan_data = openai_service.generate_training_plan(
+                    experience_level=profile.experience_level,
+                    fitness_goal=profile.fitness_goal,
+                    available_days=profile.available_days,
+                    health_conditions=profile.health_conditions
+                )
+                print("DEBUG: Plan generado correctamente")
+                
+            except Exception as e:
+                print(f"DEBUG: Error al generar el plan - {str(e)}")
+                raise
+                
             # Crear el plan en la base de datos
             plan = TrainingPlan.objects.create(
                 user=request.user,
-                plan_type='STRENGTH',  # Podríamos ajustar según el objetivo
+                plan_type='STRENGTH',
                 difficulty=profile.experience_level,
                 exercises=plan_data,
                 is_active=True
@@ -67,6 +77,7 @@ class GenerateTrainingPlanView(generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
             
         except Exception as e:
+            print(f"DEBUG: Error general en create - {str(e)}")
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST

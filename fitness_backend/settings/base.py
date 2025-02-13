@@ -149,3 +149,9 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if not OPENAI_API_KEY:
     print("WARNING: No OPENAI_API_KEY found in environment variables")
     raise ValueError("No OPENAI_API_KEY set in environment")
+
+
+print("==== DEBUG OPENAI ====")
+print(f"OpenAI API Key exists: {bool(os.getenv('OPENAI_API_KEY'))}")
+print(f"OpenAI API Key starts with: {os.getenv('OPENAI_API_KEY')[:7] if os.getenv('OPENAI_API_KEY') else 'None'}")
+print("====================")

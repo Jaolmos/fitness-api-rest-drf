@@ -7,14 +7,22 @@ from django.core.exceptions import ValidationError
 
 class OpenAIService:
     def __init__(self):
-        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        print(
+            f"OpenAI Service initialized with key starting with: {settings.OPENAI_API_KEY[:7]}")
+        try:
+            self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+            print("DEBUG: OpenAI client initialized successfully")
+        except Exception as e:
+            print(f"DEBUG: Error initializing OpenAI client: {str(e)}")
+            raise
+
         self.model = "gpt-3.5-turbo"
         self.temperature = 0.7
 
     def _create_prompt(self, experience_level: str, fitness_goal: str,
                        available_days: int, health_conditions: str = None) -> str:
         """Crea el prompt para OpenAI"""
-        
+
         base_prompt = f"""Actúa como un entrenador personal profesional experto en crear planes de entrenamiento.
         
         Necesito un plan de entrenamiento con estas características:
@@ -65,7 +73,8 @@ class OpenAIService:
                     return False
 
                 for ejercicio in dia['ejercicios']:
-                    required_keys = ['nombre', 'series', 'repeticiones', 'descanso']
+                    required_keys = ['nombre', 'series',
+                                     'repeticiones', 'descanso']
                     if not all(key in ejercicio for key in required_keys):
                         return False
                     # Validar tipos de datos
@@ -85,6 +94,9 @@ class OpenAIService:
         available_days: int,
         health_conditions: str = None
     ) -> Dict[str, Any]:
+        print("DEBUG: Intentando conexión con OpenAI")
+        # Para ver qué endpoint está usando
+        print(f"DEBUG: URL de la API: {self.client.base_url}")
         """
         Genera un plan de entrenamiento personalizado usando OpenAI.
 
