@@ -101,7 +101,7 @@ La documentación completa de la API está disponible en:
 - Swagger UI: `/swagger/`
 - ReDoc: `/redoc/`
 
-![Swagger UI Endpoints](ruta/a/tu/imagen/swagger-endpoints.png)
+![Swagger UI Endpoints](docs/images/swagger-endpoints.png)
 
 ### Endpoints Disponibles
 
