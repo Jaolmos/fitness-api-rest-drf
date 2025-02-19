@@ -94,32 +94,35 @@ fitness_api/
 ├── requirements.txt
 ```
 
-## 📖 Documentación API
+## 📚 Documentación API
 
 La documentación completa de la API está disponible en:
 
 - Swagger UI: `/swagger/`
 - ReDoc: `/redoc/`
 
-[Aquí podrías incluir una captura de pantalla de Swagger]
+![Swagger UI Endpoints](ruta/a/tu/imagen/swagger-endpoints.png)
 
-## 🔑 Endpoints Principales
+### Endpoints Disponibles
 
-### Autenticación
+#### 🔐 Autenticación (token)
+- `POST /token/` - Obtener token JWT
+- `POST /token/refresh/` - Refrescar token JWT
 
-- `POST /api/token/`: Obtener token JWT
-- `POST /api/token/refresh/`: Refrescar token JWT
+#### 🏋️ Entrenamiento (training)
+- `GET /training/` - Listar planes de entrenamiento
+- `POST /training/` - Crear nuevo plan
+- `POST /training/generate/` - Generar plan automático
+- `GET /training/{id}/` - Obtener plan específico
+- `PUT /training/{id}/` - Actualizar plan completo
+- `PATCH /training/{id}/` - Actualizar plan parcialmente
+- `DELETE /training/{id}/` - Eliminar plan
 
-### Usuarios
-
-- `POST /api/users/register/`: Registro de usuario
-- `GET/PUT /api/users/profile/`: Gestión de perfil
-
-### Entrenamiento
-
-- `GET/POST /api/training/`: Listar/Crear planes
-- `GET/PUT/DELETE /api/training/<id>/`: Gestionar plan específico
-- `POST /api/training/generate/`: Generar plan automático
+#### 👤 Usuarios (users)
+- `GET /users/profile/` - Obtener perfil de usuario
+- `PUT /users/profile/` - Actualizar perfil completo
+- `PATCH /users/profile/` - Actualizar perfil parcialmente
+- `POST /users/register/` - Registrar nuevo usuario
 
 ## ⚙️ Configuración
 
@@ -144,3 +147,5 @@ O para un directorio específico:
 ```bash
 pytest apps/training/tests/
 pytest apps/users/tests/
+
+```
