@@ -1,6 +1,6 @@
 # Fitness API
 
-Una API REST desarrollada con Django Rest Framework para gestionar planes de entrenamiento personalizados y perfiles de usuario.
+Una API REST desarrollada con Django Rest Framework para gestionar planes de entrenamiento personalizados y perfiles de usuario, se integra con OpenAI ChatGPT.
 
 ## 🚀 Características
 
